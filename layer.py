@@ -38,6 +38,9 @@ class Layer:
         return r + g + b
 
     def map(self):
+        #k of k-means
+        k = 16
+        # Some primary colors to use as a base
         colors = (
             (0,0,0),
             (255,0,0),
@@ -46,7 +49,7 @@ class Layer:
             (255,255,255))
 
         new_starting_colors = []
-        for i in range(16):
+        for i in range(k):
             a = (random.randint(0,256), random.randint(0,256),random.randint(0,256))
             new_starting_colors.append(a)
 
@@ -93,6 +96,8 @@ class Layer:
                     sum_b += match[2]
                 if len(matches) == 0:
                     print("No matches")
+                    # If we didn't match with any pixels
+                    # then "respawn" the color at a random position.
                     new_palette.append((random.randint(0,256), random.randint(0,256),random.randint(0,256)))
                     continue
                 sum_r /= len(matches)
@@ -117,10 +122,6 @@ class Layer:
                         best_index = i
                 # print(best_index)
                 self.set_pixel(x,y,all_colors[best_index])
-
-
-
-
 
     def generate_histogram(self):
         layer = Layer(256, 100, 0, 0)

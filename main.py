@@ -12,7 +12,7 @@ import math
 
 
 def one_map():
-    file = "band_small.jpg"
+    file = "leather.jpg"
 
     container = get_layer_from_file("./images/" + file)
     container.layers[0].map()
