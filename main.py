@@ -11,6 +11,44 @@ import os
 import math
 
 
+def one_dither_k_means():
+    file = "band.jpg"
+
+    container = get_layer_from_file("./images/" + file)
+    k = 2
+    iterations = 1
+    colors = container.layers[0].k_means(k, iterations)
+    container.layers[0].dither(colors)
+    # container.layers[0].dither([
+    #     (0,0,0),
+    #     (255,0,0),
+    #     (0,255,0),
+    #     (0,0,255),
+    #     (0,255,255),
+    #     (255,0,255),
+    #     (255,255,0),
+    #     (255,255,255)
+    # ])
+    container.pack()
+    container.save("done_" + file + "_dither_k_means" + str(k) + "_" + str(iterations)+ ".png")
+
+def one_dither():
+    file = "band.jpg"
+
+    container = get_layer_from_file("./images/" + file)
+    container.layers[0].dither([
+        (0,0,0),
+        (255,0,0),
+        (0,255,0),
+        (0,0,255),
+        (0,255,255),
+        (255,0,255),
+        (255,255,0),
+        (255,255,255)
+    ])
+    container.pack()
+    container.save("done_" + file + "_dither.png")
+
 def one_map():
     file = "leather.jpg"
 
@@ -190,7 +228,7 @@ def get_layers_in_a_row(count, filename):
     return container
 
 start = time.time()
-one_map()
+one_dither_k_means()
 end = time.time()
 print(str(end - start) + " " + " seconds")
     

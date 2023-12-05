@@ -37,6 +37,78 @@ class Layer:
         b = math.fabs(one[2] - two[2])
         return r + g + b
 
+    def k_means(self, k=16, iterations = 10):
+        
+        # Some primary colors to use as a base
+        colors = (
+            (0,0,0),
+            (255,0,0),
+            (0,255,0),
+            (0,0,255),
+            (255,255,255))
+
+        new_starting_colors = []
+        for i in range(k):
+            a = (random.randint(0,256), random.randint(0,256),random.randint(0,256))
+            new_starting_colors.append(a)
+
+        colors = new_starting_colors
+        all_colors = colors
+
+
+         
+        for i in range(iterations):
+            print("Looping at " + str(i))
+            dictionary = {}
+            for color in all_colors:
+                dictionary[color] = []
+        
+            for y in range(self.height):
+                for x in range(self.width):
+                    pixel = self.get_pixel(x, y)
+                    # all_colors.append(pixel)
+                    closest_distance = 10000000
+                    closest_palette_color = None
+                    for palette_color in all_colors:
+                        distance = self.color_difference(palette_color, pixel)
+                        if distance < closest_distance:
+                            closest_distance = distance
+                            closest_palette_color = palette_color
+                    if closest_palette_color is None:
+                        print(str(x) + ", " + str(y))
+                    dictionary[closest_palette_color].append(pixel)
+
+            # for key in dictionary.keys():
+            #     print(key)
+            #     print(len(dictionary[key]))
+
+            # Now we are going to update our palette colors
+            new_palette = []
+            for key in dictionary.keys():
+                matches = dictionary[key]
+                sum_r = 0
+                sum_g = 0
+                sum_b = 0
+                for match in matches:
+                    sum_r += match[0]
+                    sum_g += match[1]
+                    sum_b += match[2]
+                if len(matches) == 0:
+                    print("No matches")
+                    # If we didn't match with any pixels
+                    # then "respawn" the color at a random position.
+                    new_palette.append((random.randint(0,256), random.randint(0,256),random.randint(0,256)))
+                    continue
+                sum_r /= len(matches)
+                sum_g /= len(matches)
+                sum_b /= len(matches)
+                new_palette.append((sum_r, sum_g, sum_b))
+
+            all_colors = new_palette
+            return all_colors
+                    
+
+
     def map(self):
         #k of k-means
         k = 16
@@ -121,6 +193,34 @@ class Layer:
                         best_difference = difference
                         best_index = i
                 # print(best_index)
+                self.set_pixel(x,y,all_colors[best_index])
+    
+    def dither(self, colors):
+        all_colors = colors
+
+        for y in range(self.height):
+            sum_error = [0,0,0]
+            for x in range(self.width):
+                pixel = self.get_pixel(x, y)
+                best_index = -1
+                best_difference = 100000000
+                tempColor = [
+                    pixel[0] + sum_error[0],
+                    pixel[1] + sum_error[1],
+                    pixel[2] + sum_error[2]]
+                for i in range(len(all_colors)):
+                    color = all_colors[i]
+                    difference = self.color_difference(color, tempColor)
+                    if difference < best_difference:
+                        best_difference = difference
+                        best_index = i
+                # print(best_index)
+                best_color = all_colors[best_index]
+                sum_error = [
+                    pixel[0] - best_color[0],
+                    pixel[1] - best_color[1],
+                    pixel[2] - best_color[2],
+                ]
                 self.set_pixel(x,y,all_colors[best_index])
 
     def generate_histogram(self):
