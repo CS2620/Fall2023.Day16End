@@ -46,15 +46,16 @@ class Layer:
             (255,255,255))
 
         new_starting_colors = []
-        for i in range(10):
+        for i in range(16):
             a = (random.randint(0,256), random.randint(0,256),random.randint(0,256))
+            new_starting_colors.append(a)
 
         colors = new_starting_colors
         all_colors = colors
 
 
          
-        for i in range(1):
+        for i in range(10):
             print("Looping at " + str(i))
             dictionary = {}
             for color in all_colors:
@@ -71,11 +72,13 @@ class Layer:
                         if distance < closest_distance:
                             closest_distance = distance
                             closest_palette_color = palette_color
+                    if closest_palette_color is None:
+                        print(str(x) + ", " + str(y))
                     dictionary[closest_palette_color].append(pixel)
 
-            for key in dictionary.keys():
-                print(key)
-                print(len(dictionary[key]))
+            # for key in dictionary.keys():
+            #     print(key)
+            #     print(len(dictionary[key]))
 
             # Now we are going to update our palette colors
             new_palette = []
@@ -88,13 +91,17 @@ class Layer:
                     sum_r += match[0]
                     sum_g += match[1]
                     sum_b += match[2]
+                if len(matches) == 0:
+                    print("No matches")
+                    new_palette.append((random.randint(0,256), random.randint(0,256),random.randint(0,256)))
+                    continue
                 sum_r /= len(matches)
                 sum_g /= len(matches)
                 sum_b /= len(matches)
                 new_palette.append((sum_r, sum_g, sum_b))
 
             all_colors = new_palette
-            print(new_palette)
+            # print(new_palette)
                     
 
         for y in range(self.height):
